@@ -1,25 +1,38 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+
+import { Route, Link } from "react-router-dom";
+import PokeList from "./components/PokeList/PokeList.js";
+import PokemonTeam from "./components/PokemonTeam/PokemonTeam.js";
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/pokemon-list/">Pokemon List</Link>
+            </li>
+            <li>
+              <Link to="/pokemon-team/">Pokemon Team</Link>
+            </li>
+          </ul>
+        </nav>
+        <h1>Welcom To PokeDex</h1>
+        <Route exact path="/" />
+        <Route
+          path="/pokemon-list/"
+          render={props => <PokeList {...props} />}
+        />
+        <Route
+          exact
+          path="/pokemon-team/"
+          render={props => <PokemonTeam {...props} />}
+        />
       </div>
     );
   }
