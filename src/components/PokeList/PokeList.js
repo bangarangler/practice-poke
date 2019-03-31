@@ -9,7 +9,10 @@ class PokeList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pokemon: []
+      pokemon: [],
+      loading: false,
+      url: "",
+      previous: ""
     };
   }
 
@@ -17,7 +20,7 @@ class PokeList extends React.Component {
     axios
       .get("https://pokeapi.co/api/v2/pokemon/")
       .then(res => {
-        this.setState({ pokemon: res.data.results });
+        this.setState({ pokemon: res.data.results, url: res.data.next });
         console.log(this.state.pokemon);
       })
       .catch(err => {
@@ -25,16 +28,48 @@ class PokeList extends React.Component {
       });
   }
 
+  handleNext = () => {
+    axios
+      .get(this.state.url)
+      .then(res => {
+        this.setState({
+          pokemon: res.data.results,
+          url: res.data.next,
+          previous: res.data.previous
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  handlePrev = () => {
+    axios.get(this.state.previous).then(res => {
+      this.setState({
+        pokemon: res.data.results,
+        url: res.data.next,
+        previous: res.data.previous
+      });
+    });
+  };
+
   render() {
-    console.log(this.state.pokemon);
     return (
-      <Pokemon pokemon={this.state.pokemon} />
-    )
+      <React.Fragment>
+        {this.state.pokemon ? (
+          this.state.pokemon.map(mon => {
+            return <Pokemon key={uuid4()} {...mon} />;
+          })
+        ) : (
+          <p>Loading...</p>
+        )}
+        {this.state.previous !== "" && this.state.previous !== null ? (
+          <button onClick={this.handlePrev}>Previous Mons</button>
+        ) : null}
+        <button onClick={this.handleNext}>Load More Mons</button>
+      </React.Fragment>
+    );
   }
 }
 
 export default PokeList;
-
-//{this.state.pokemon.map(pokename => {
-//return <Pokemon key={uuid4()} pokeName={pokeName} />;
-//})}
